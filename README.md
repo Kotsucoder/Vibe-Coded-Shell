@@ -29,7 +29,9 @@ This project demonstrates a forward-thinking and proactive approach to software 
 ## Getting Started
 
 To run the shell, simply execute the Python script:
+```bash
 python3 shell.py
+```
 
 ## License
 
