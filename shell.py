@@ -7,6 +7,7 @@ class Shell:
         self.builtins = {
             "exit": self.builtin_exit,
             "echo": self.builtin_echo,
+            "type": self.builtin_type,
         }
 
     def builtin_exit(self, *args):
@@ -20,6 +21,21 @@ class Shell:
         Prints the arguments to the console.
         """
         print(" ".join(args))
+        return True
+
+    def builtin_type(self, *args):
+        """
+        Determines how a command would be interpreted.
+        """
+        if not args:
+            print("type: missing command argument")
+            return True
+        
+        for command in args:
+            if command in self.builtins:
+                print(f"{command} is a shell builtin")
+            else:
+                print(f"{command}: not found")
         return True
 
     def run(self):
