@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+import os
 
 class Shell:
     def __init__(self):
@@ -34,7 +35,18 @@ class Shell:
         for command in args:
             if command in self.builtins:
                 print(f"{command} is a shell builtin")
-            else:
+                continue
+
+            path_dirs = os.environ.get("PATH", "").split(os.pathsep)
+            found = False
+            for directory in path_dirs:
+                file_path = os.path.join(directory, command)
+                if os.path.isfile(file_path) and os.access(file_path, os.X_OK):
+                    print(f"{command} is {file_path}")
+                    found = True
+                    break
+            
+            if not found:
                 print(f"{command}: not found")
         return True
 
