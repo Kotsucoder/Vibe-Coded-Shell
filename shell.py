@@ -2,6 +2,7 @@
 
 import sys
 import os
+import subprocess
 
 class Shell:
     def __init__(self):
@@ -11,6 +12,18 @@ class Shell:
             "type": self.builtin_type,
             "pwd": self.builtin_pwd,
         }
+
+    def find_in_path(self, command):
+        """
+        Searches for a command in the PATH environment variable.
+        Returns the full path to the executable if found, otherwise None.
+        """
+        path_dirs = os.environ.get("PATH", "").split(os.pathsep)
+        for directory in path_dirs:
+            file_path = os.path.join(directory, command)
+            if os.path.isfile(file_path) and os.access(file_path, os.X_OK):
+                return file_path
+        return None
 
     def builtin_exit(self, *args):
         """
@@ -38,16 +51,10 @@ class Shell:
                 print(f"{command} is a shell builtin")
                 continue
 
-            path_dirs = os.environ.get("PATH", "").split(os.pathsep)
-            found = False
-            for directory in path_dirs:
-                file_path = os.path.join(directory, command)
-                if os.path.isfile(file_path) and os.access(file_path, os.X_OK):
-                    print(f"{command} is {file_path}")
-                    found = True
-                    break
-            
-            if not found:
+            path = self.find_in_path(command)
+            if path:
+                print(f"{command} is {path}")
+            else:
                 print(f"{command}: not found")
         return True
 
@@ -79,7 +86,17 @@ class Shell:
                     if not self.builtins[command](*args):
                         break
                 else:
-                    print(f"{command}: command not found")
+                    program_path = self.find_in_path(command)
+                    if program_path:
+                        try:
+                            # Pass the arguments from command line to the program
+                            # We use the original command name as argv[0] to be polite, 
+                            # but execute the specific file we found.
+                            subprocess.run([command] + list(args), executable=program_path)
+                        except Exception as e:
+                            print(f"{command}: execution error: {e}")
+                    else:
+                        print(f"{command}: command not found")
             except KeyboardInterrupt:
                 print()
                 continue
