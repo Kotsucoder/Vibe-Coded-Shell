@@ -10,6 +10,7 @@ class Shell:
             "exit": self.builtin_exit,
             "echo": self.builtin_echo,
             "type": self.builtin_type,
+            "pwd": self.builtin_pwd,
         }
 
     def find_in_path(self, command):
@@ -55,6 +56,13 @@ class Shell:
                 print(f"{command} is {path}")
             else:
                 print(f"{command}: not found")
+        return True
+
+    def builtin_pwd(self, *args):
+        """
+        Prints the current working directory.
+        """
+        print(os.getcwd())
         return True
 
     def run(self):
