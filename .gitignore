@@ -200,6 +200,13 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+.cursorrules
+
+# MacOS
+.DS_Store
+
+# Dev Containers
+.devcontainer/
 
 # Marimo
 marimo/_static/

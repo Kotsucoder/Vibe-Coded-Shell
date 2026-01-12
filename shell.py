@@ -11,6 +11,7 @@ class Shell:
             "echo": self.builtin_echo,
             "type": self.builtin_type,
             "pwd": self.builtin_pwd,
+            "cd": self.builtin_cd,
         }
 
     def find_in_path(self, command):
@@ -63,6 +64,22 @@ class Shell:
         Prints the current working directory.
         """
         print(os.getcwd())
+        return True
+
+    def builtin_cd(self, *args):
+        """
+        Changes the current working directory.
+        """
+        if not args:
+            return True
+
+        path = args[0]
+        try:
+            os.chdir(path)
+        except FileNotFoundError:
+            print(f"cd: {path}: No such file or directory")
+        except Exception:
+             print(f"cd: {path}: No such file or directory")
         return True
 
     def run(self):
