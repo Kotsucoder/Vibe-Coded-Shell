@@ -74,6 +74,17 @@ class Shell:
             return True
 
         path = args[0]
+        if path.startswith("~"):
+            home = os.environ.get("HOME")
+            if home is None:
+                print("cd: HOME not set")
+                return True
+            
+            if path == "~":
+                path = home
+            elif path.startswith("~/"):
+                path = os.path.join(home, path[2:])
+
         try:
             os.chdir(path)
         except FileNotFoundError:
