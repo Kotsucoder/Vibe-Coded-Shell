@@ -1,6 +1,11 @@
 import sys
+import os
 import io
 import unittest
+
+# Add parent directory to path so we can import shell
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from shell import Shell
 
 class TestShellSingleQuotes(unittest.TestCase):
