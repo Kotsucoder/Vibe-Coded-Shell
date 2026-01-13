@@ -93,6 +93,39 @@ class Shell:
              print(f"cd: {path}: No such file or directory")
         return True
 
+    def parse_line(self, line):
+        """
+        Parses the command line into arguments, handling single quotes.
+        """
+        args = []
+        current_token = []
+        in_single_quote = False
+        in_token = False
+
+        for char in line:
+            if in_single_quote:
+                if char == "'":
+                    in_single_quote = False
+                else:
+                    current_token.append(char)
+            else:
+                if char == "'":
+                    in_single_quote = True
+                    in_token = True
+                elif char.isspace():
+                    if in_token:
+                        args.append("".join(current_token))
+                        current_token = []
+                        in_token = False
+                else:
+                    current_token.append(char)
+                    in_token = True
+        
+        if in_token:
+            args.append("".join(current_token))
+            
+        return args
+
     def run(self):
         """
         Main loop to run the Vibe Coded Shell.
@@ -106,7 +139,9 @@ class Shell:
                 line = line.strip()
                 if not line:
                     continue
-                parts = line.split()
+                parts = self.parse_line(line)
+                if not parts:
+                    continue
                 command = parts[0]
                 args = parts[1:]
 
