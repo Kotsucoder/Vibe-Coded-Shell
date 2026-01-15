@@ -95,11 +95,12 @@ class Shell:
 
     def parse_line(self, line):
         """
-        Parses the command line into arguments, handling single quotes.
+        Parses the command line into arguments, handling single and double quotes.
         """
         args = []
         current_token = []
         in_single_quote = False
+        in_double_quote = False
         in_token = False
 
         for char in line:
@@ -108,9 +109,17 @@ class Shell:
                     in_single_quote = False
                 else:
                     current_token.append(char)
+            elif in_double_quote:
+                if char == '"':
+                    in_double_quote = False
+                else:
+                    current_token.append(char)
             else:
                 if char == "'":
                     in_single_quote = True
+                    in_token = True
+                elif char == '"':
+                    in_double_quote = True
                     in_token = True
                 elif char.isspace():
                     if in_token:
