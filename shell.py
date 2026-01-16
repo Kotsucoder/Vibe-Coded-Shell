@@ -102,9 +102,14 @@ class Shell:
         in_single_quote = False
         in_double_quote = False
         in_token = False
+        escaped = False
 
         for char in line:
-            if in_single_quote:
+            if escaped:
+                current_token.append(char)
+                escaped = False
+                in_token = True
+            elif in_single_quote:
                 if char == "'":
                     in_single_quote = False
                 else:
@@ -115,7 +120,10 @@ class Shell:
                 else:
                     current_token.append(char)
             else:
-                if char == "'":
+                if char == '\\':
+                    escaped = True
+                    in_token = True
+                elif char == "'":
                     in_single_quote = True
                     in_token = True
                 elif char == '"':
