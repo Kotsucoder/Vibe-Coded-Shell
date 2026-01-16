@@ -1,4 +1,10 @@
 import unittest
+import sys
+import os
+
+# Add parent directory to path so we can import shell
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from shell import Shell
 
 class TestBackslash(unittest.TestCase):
@@ -12,16 +18,7 @@ class TestBackslash(unittest.TestCase):
         self.assertEqual(args, ["echo", "three   spaces"])
 
     def test_backslash_preserves_first_space_literal(self):
-        # echo before\     after -> ["before  after"] (before + space + after, wait. The prompt says "before  after")
-        # Let's check the prompt again:
-        # echo before\     after | before  after | The backslash preserves the first space literally, but the shell collapses the subsequent unescaped spaces.
-        # So "before" + " " + "after" -> "before after" ?? 
-        # No, "before\ " -> "before "
-        # Then "    " (spaces) -> separator
-        # Then "after"
-        # So args should be ["echo", "before ", "after"] -> output "before  after" (echo joins with space)
-        # Ah, echo joins arguments with a space.
-        # If args is ["echo", "before ", "after"], output is "before  after". Correct.
+        # echo before\     after -> ["echo", "before ", "after"]
         line = "echo before\\     after"
         args = self.shell.parse_line(line)
         self.assertEqual(args, ["echo", "before ", "after"])
