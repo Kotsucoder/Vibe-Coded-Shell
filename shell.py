@@ -106,7 +106,14 @@ class Shell:
 
         for char in line:
             if escaped:
-                current_token.append(char)
+                if in_double_quote:
+                    if char in ['\\', '"']:
+                        current_token.append(char)
+                    else:
+                        current_token.append('\\')
+                        current_token.append(char)
+                else:
+                    current_token.append(char)
                 escaped = False
                 in_token = True
             elif in_single_quote:
@@ -117,6 +124,8 @@ class Shell:
             elif in_double_quote:
                 if char == '"':
                     in_double_quote = False
+                elif char == '\\':
+                    escaped = True
                 else:
                     current_token.append(char)
             else:
