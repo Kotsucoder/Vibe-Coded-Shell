@@ -1,0 +1,20 @@
+[
+  {
+    "name": "test_backslash_escapes_backslash",
+    "type": "run",
+    "input": "echo \"A \\\\ escapes itself\"\nexit\n",
+    "expected": "A \\ escapes itself"
+  },
+  {
+    "name": "test_backslash_escapes_double_quote",
+    "type": "run",
+    "input": "echo \"A \\\" inside double quotes\"\nexit\n",
+    "expected": "A \" inside double quotes"
+  },
+  {
+    "name": "test_backslash_literal_otherwise",
+    "type": "run",
+    "input": "echo \"A \\c literal backslash\"\nexit\n",
+    "expected": "A \\c literal backslash"
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "name": "test_backslash_escapes_space",
+    "type": "parse",
+    "input": "echo three\\ \\ \\ spaces",
+    "expected": ["echo", "three   spaces"]
+  },
+  {
+    "name": "test_backslash_preserves_first_space_literal",
+    "type": "parse",
+    "input": "echo before\\     after",
+    "expected": ["echo", "before ", "after"]
+  },
+  {
+    "name": "test_backslash_escapes_n",
+    "type": "parse",
+    "input": "echo test\\nexample",
+    "expected": ["echo", "testnexample"]
+  },
+  {
+    "name": "test_backslash_escapes_backslash",
+    "type": "parse",
+    "input": "echo hello\\\\world",
+    "expected": ["echo", "hello\\world"]
+  },
+  {
+    "name": "test_backslash_escapes_single_quote",
+    "type": "parse",
+    "input": "echo \\'hello\\'",
+    "expected": ["echo", "'hello'"]
+  },
+  {
+    "name": "test_backslash_escapes_double_quote",
+    "type": "parse",
+    "input": "echo \\\"hello\\\"",
+    "expected": ["echo", "\"hello\""]
+  }
+]

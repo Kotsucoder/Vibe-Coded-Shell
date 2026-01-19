@@ -1,0 +1,20 @@
+[
+  {
+    "name": "test_backslash_literally_in_single_quotes",
+    "type": "parse",
+    "input": "echo 'shell\\\\\\nscript'",
+    "expected": ["echo", "shell\\\\\\nscript"]
+  },
+  {
+    "name": "test_backslash_double_quote_in_single_quotes",
+    "type": "parse",
+    "input": "echo 'example\\\"test'",
+    "expected": ["echo", "example\\\"test"]
+  },
+  {
+    "name": "test_backslash_at_end_of_single_quotes",
+    "type": "parse",
+    "input": "echo 'trailing\\'",
+    "expected": ["echo", "trailing\\"]
+  }
+]
