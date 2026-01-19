@@ -17,7 +17,7 @@ class Executor:
         return None
 
     @staticmethod
-    def run_external_program(command: str, args: List[str]) -> bool:
+    def run_external_program(command: str, args: List[str], output_file=None) -> bool:
         """
         Runs an external program.
         """
@@ -27,7 +27,7 @@ class Executor:
                 # Pass the arguments from command line to the program
                 # We use the original command name as argv[0] to be polite, 
                 # but execute the specific file we found.
-                subprocess.run([command] + args, executable=program_path)
+                subprocess.run([command] + args, executable=program_path, stdout=output_file)
             except Exception as e:
                 print(f"{command}: execution error: {e}")
         else:
