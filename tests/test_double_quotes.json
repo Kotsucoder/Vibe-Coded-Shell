@@ -1,0 +1,32 @@
+[
+  {
+    "name": "test_double_quotes_spaces",
+    "type": "run",
+    "input": "echo \"hello    world\"\nexit\n",
+    "expected": "hello    world"
+  },
+  {
+    "name": "test_double_quotes_concatenation",
+    "type": "run",
+    "input": "echo \"hello\"\"world\"\nexit\n",
+    "expected": "helloworld"
+  },
+  {
+    "name": "test_mixed_quotes_1",
+    "type": "run",
+    "input": "echo \"shell's test\"\nexit\n",
+    "expected": "shell's test"
+  },
+  {
+    "name": "test_mixed_quotes_2",
+    "type": "run",
+    "input": "echo 'shell \"test\"'\nexit\n",
+    "expected": "shell \"test\""
+  },
+  {
+    "name": "test_quoted_concatenation_mixed",
+    "type": "run",
+    "input": "echo \"hello\"'world'\nexit\n",
+    "expected": "helloworld"
+  }
+]

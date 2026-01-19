@@ -1,0 +1,26 @@
+[
+  {
+    "name": "test_single_quotes_spaces",
+    "type": "run",
+    "input": "echo 'hello    world'\nexit\n",
+    "expected": "hello    world"
+  },
+  {
+    "name": "test_single_quotes_empty",
+    "type": "run",
+    "input": "echo 'hello''world'\nexit\n",
+    "expected": "helloworld"
+  },
+  {
+    "name": "test_no_quotes_collapse_spaces",
+    "type": "run",
+    "input": "echo hello    world\nexit\n",
+    "expected": "hello world"
+  },
+  {
+    "name": "test_mixed_quotes_concatenation",
+    "type": "run",
+    "input": "echo hello''world\nexit\n",
+    "expected": "helloworld"
+  }
+]
