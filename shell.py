@@ -18,12 +18,13 @@ class Shell:
         }
         self.builtins_handler.set_registry(self.builtins)
 
-    def _parse_redirection(self, parts: List[str]) -> Tuple[Optional[List[str]], Optional[str]]:
+    def _parse_redirection(self, parts: List[str]) -> Tuple[Optional[List[str]], Optional[str], Optional[str]]:
         """
-        Parses the command parts for output redirection.
-        Returns a tuple of (cleaned_parts, output_file_path).
+        Parses the command parts for output and error redirection.
+        Returns a tuple of (cleaned_parts, output_file_path, error_file_path).
         """
         output_file_path = None
+        error_file_path = None
         cleaned_parts = []
         skip_next = False
         
@@ -38,11 +39,18 @@ class Shell:
                     skip_next = True
                 else:
                     print("Syntax error: expected file path after redirection operator")
-                    return None, None
+                    return None, None, None
+            elif part == "2>":
+                if i + 1 < len(parts):
+                    error_file_path = parts[i + 1]
+                    skip_next = True
+                else:
+                    print("Syntax error: expected file path after stderr redirection operator")
+                    return None, None, None
             else:
                 cleaned_parts.append(part)
                 
-        return cleaned_parts, output_file_path
+        return cleaned_parts, output_file_path, error_file_path
 
     def run(self):
         """
@@ -62,18 +70,28 @@ class Shell:
                 if not parts:
                     continue
                 
-                cleaned_parts, output_file_path = self._parse_redirection(parts)
+                cleaned_parts, output_file_path, error_file_path = self._parse_redirection(parts)
                 if cleaned_parts is None:
                     continue
                 
                 parts = cleaned_parts
                 output_file = None
+                error_file = None
 
                 if output_file_path:
                     try:
                         output_file = open(output_file_path, 'w')
                     except Exception as e:
                         print(f"Error opening file: {e}")
+                        continue
+
+                if error_file_path:
+                    try:
+                        error_file = open(error_file_path, 'w')
+                    except Exception as e:
+                        print(f"Error opening stderr file: {e}")
+                        if output_file:
+                            output_file.close()
                         continue
 
                 try:
@@ -85,23 +103,26 @@ class Shell:
                     args = parts[1:]
 
                     if command in self.builtins:
-                        if output_file:
-                            old_stdout = sys.stdout
-                            sys.stdout = output_file
-                            try:
-                                if not self.builtins[command](args):
-                                    break
-                            finally:
-                                sys.stdout = old_stdout
-                        else:
+                        old_stdout = sys.stdout
+                        old_stderr = sys.stderr
+                        try:
+                            if output_file:
+                                sys.stdout = output_file
+                            if error_file:
+                                sys.stderr = error_file
+                            
                             if not self.builtins[command](args):
                                 break
+                        finally:
+                            sys.stdout = old_stdout
+                            sys.stderr = old_stderr
                     else:
-                        Executor.run_external_program(command, args, output_file=output_file)
+                        Executor.run_external_program(command, args, output_file=output_file, error_file=error_file)
                 finally:
                     if output_file:
                         output_file.close()
-                    
+                    if error_file:
+                        error_file.close()
             except KeyboardInterrupt:
                 print()
                 continue

@@ -1,5 +1,6 @@
 import os
 import subprocess
+import sys
 from typing import List, Optional
 
 class Executor:
@@ -17,7 +18,7 @@ class Executor:
         return None
 
     @staticmethod
-    def run_external_program(command: str, args: List[str], output_file=None) -> bool:
+    def run_external_program(command: str, args: List[str], output_file=None, error_file=None) -> bool:
         """
         Runs an external program.
         """
@@ -27,9 +28,11 @@ class Executor:
                 # Pass the arguments from command line to the program
                 # We use the original command name as argv[0] to be polite, 
                 # but execute the specific file we found.
-                subprocess.run([command] + args, executable=program_path, stdout=output_file)
+                subprocess.run([command] + args, executable=program_path, stdout=output_file, stderr=error_file)
             except Exception as e:
-                print(f"{command}: execution error: {e}")
+                target = error_file if error_file else sys.stderr
+                print(f"{command}: execution error: {e}", file=target)
         else:
-            print(f"{command}: command not found")
+            target = error_file if error_file else sys.stderr
+            print(f"{command}: command not found", file=target)
         return True
