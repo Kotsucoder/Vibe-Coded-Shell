@@ -1,4 +1,5 @@
 import os
+import sys
 from typing import List, Dict, Callable
 from executor import Executor
 
@@ -27,7 +28,7 @@ class ShellBuiltins:
         Determines how a command would be interpreted.
         """
         if not args:
-            print("type: missing command argument")
+            print("type: missing command argument", file=sys.stderr)
             return True
         
         for command in args:
@@ -39,7 +40,7 @@ class ShellBuiltins:
             if path:
                 print(f"{command} is {path}")
             else:
-                print(f"{command}: not found")
+                print(f"{command}: not found", file=sys.stderr)
         return True
 
     def pwd(self, args: List[str]) -> bool:
@@ -60,7 +61,7 @@ class ShellBuiltins:
         if path.startswith("~"):
             home = os.environ.get("HOME")
             if home is None:
-                print("cd: HOME not set")
+                print("cd: HOME not set", file=sys.stderr)
                 return True
             
             if path == "~":
@@ -71,7 +72,7 @@ class ShellBuiltins:
         try:
             os.chdir(path)
         except FileNotFoundError:
-            print(f"cd: {path}: No such file or directory")
+            print(f"cd: {path}: No such file or directory", file=sys.stderr)
         except Exception:
-             print(f"cd: {path}: No such file or directory")
+             print(f"cd: {path}: No such file or directory", file=sys.stderr)
         return True
