@@ -18,15 +18,16 @@ class Shell:
         }
         self.builtins_handler.set_registry(self.builtins)
 
-    def _parse_redirection(self, parts: List[str]) -> Tuple[Optional[List[str]], Optional[str], Optional[str]]:
+    def _parse_redirection(self, parts: List[str]) -> Tuple[Optional[List[str]], Optional[str], Optional[str], bool]:
         """
         Parses the command parts for output and error redirection.
-        Returns a tuple of (cleaned_parts, output_file_path, error_file_path).
+        Returns a tuple of (cleaned_parts, output_file_path, error_file_path, append_mode).
         """
         output_file_path = None
         error_file_path = None
         cleaned_parts = []
         skip_next = False
+        append_mode = False
         
         for i, part in enumerate(parts):
             if skip_next:
@@ -37,20 +38,29 @@ class Shell:
                 if i + 1 < len(parts):
                     output_file_path = parts[i + 1]
                     skip_next = True
+                    append_mode = False
                 else:
                     print("Syntax error: expected file path after redirection operator")
-                    return None, None, None
+                    return None, None, None, False
+            elif part in [">>", "1>>"]:
+                if i + 1 < len(parts):
+                    output_file_path = parts[i + 1]
+                    skip_next = True
+                    append_mode = True
+                else:
+                    print("Syntax error: expected file path after redirection operator")
+                    return None, None, None, False
             elif part == "2>":
                 if i + 1 < len(parts):
                     error_file_path = parts[i + 1]
                     skip_next = True
                 else:
                     print("Syntax error: expected file path after stderr redirection operator")
-                    return None, None, None
+                    return None, None, None, False
             else:
                 cleaned_parts.append(part)
                 
-        return cleaned_parts, output_file_path, error_file_path
+        return cleaned_parts, output_file_path, error_file_path, append_mode
 
     def run(self):
         """
@@ -70,7 +80,7 @@ class Shell:
                 if not parts:
                     continue
                 
-                cleaned_parts, output_file_path, error_file_path = self._parse_redirection(parts)
+                cleaned_parts, output_file_path, error_file_path, append_mode = self._parse_redirection(parts)
                 if cleaned_parts is None:
                     continue
                 
@@ -80,7 +90,8 @@ class Shell:
 
                 if output_file_path:
                     try:
-                        output_file = open(output_file_path, 'w')
+                        mode = 'a' if append_mode else 'w'
+                        output_file = open(output_file_path, mode)
                     except Exception as e:
                         print(f"Error opening file: {e}")
                         continue
